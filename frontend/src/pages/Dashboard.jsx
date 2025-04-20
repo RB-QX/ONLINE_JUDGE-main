@@ -1,4 +1,4 @@
-// AdminDashboard.jsx
+// frontend/src/pages/Dashboard.jsx
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -21,11 +21,11 @@ const Dashboard = () => {
       .then((data) => setTotalProblems(data.length))
       .catch((error) => console.error("Error fetching total problems:", error));
 
-    // Fetch totla contest problems
+    // Fetch total contest problems
     fetch(`${process.env.REACT_APP_BACKEND_URL}allcontestproblem`)
       .then((response) => response.json())
       .then((data) => setContestProblems(data.length))
-      .catch((error) => console.error("Error fetching total problems:", error));
+      .catch((error) => console.error("Error fetching total contest problems:", error));
 
     // Fetch pending problems
     fetch(`${process.env.REACT_APP_BACKEND_URL}allpendinguserproblems`)
@@ -44,10 +44,12 @@ const Dashboard = () => {
           <h2 className="text-xl font-semibold">Total Users</h2>
           <p className="text-2xl">{totalUsers}</p>
         </div>
+
         <div className="bg-green-100 p-4 rounded shadow">
           <h2 className="text-xl font-semibold">Total Problems</h2>
-          <p className="text-2xl ">{totalProblems}</p>
+          <p className="text-2xl">{totalProblems}</p>
         </div>
+
         <div className="bg-yellow-100 p-4 rounded shadow">
           <h2 className="text-xl font-semibold">Pending Problems</h2>
           <p className="text-2xl">{pendingProblems}</p>
@@ -55,6 +57,7 @@ const Dashboard = () => {
             View Pending Problems
           </Link>
         </div>
+
         <div className="bg-yellow-100 p-4 rounded shadow">
           <h2 className="text-xl font-semibold">Contest</h2>
           <p className="text-2xl">{contestProblems}</p>

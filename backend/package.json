@@ -26,6 +26,7 @@
     "leetcode-query": "^2.0.0",
     "mongodb": "^6.15.0",
     "mongoose": "^8.4.1",
+    "node-cron": "^3.0.3",
     "node-fetch": "^2.7.0",
     "nodemailer": "^6.9.14",
     "nodemon": "^3.1.3",
