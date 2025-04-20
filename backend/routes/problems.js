@@ -3,7 +3,7 @@
 const express = require("express");
 const router = express.Router();
 const Problem = require("../model/Problem");
-const { isAdmin } = require("../middlewares/role");
+const { isAdmin } = require("../middleware/role");
 
 // POST /addproblems
 // Create a new problem (admin only)

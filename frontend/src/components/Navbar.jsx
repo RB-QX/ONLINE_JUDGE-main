@@ -1,8 +1,8 @@
 // frontend/src/components/Navbar.jsx
 import React, { useContext, useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
-import { FiMenu, FiX, FiSun, FiMoon } from "react-icons/fi";
+import { FiMenu, FiX, FiSun, FiMoon, FiUser } from "react-icons/fi";
 import logo from "../assets/logo.gif";
 
 const links = [
@@ -16,7 +16,8 @@ const links = [
 ];
 
 export default function Navbar() {
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, setIsLoggedIn, user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const role = localStorage.getItem("role");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -38,6 +39,12 @@ export default function Navbar() {
   const handleLogout = () => {
     localStorage.clear();
     setIsLoggedIn(false);
+    setMobileOpen(false);
+    navigate("/");
+  };
+
+  const goToDashboard = () => {
+    navigate("/dashboard");
     setMobileOpen(false);
   };
 
@@ -83,6 +90,23 @@ export default function Navbar() {
             {darkMode ? <FiSun /> : <FiMoon />}
           </button>
 
+          {isLoggedIn && user?.avatarUrl ? (
+            <img
+              src={user.avatarUrl}
+              alt="User avatar"
+              onClick={goToDashboard}
+              className="h-8 w-8 rounded-full cursor-pointer ring-2 ring-orange-500"
+            />
+          ) : isLoggedIn ? (
+            <button
+              onClick={goToDashboard}
+              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition text-gray-700 dark:text-gray-300"
+              aria-label="Go to dashboard"
+            >
+              <FiUser size={20} />
+            </button>
+          ) : null}
+
           {!isLoggedIn ? (
             <>
               <NavLink
@@ -122,6 +146,28 @@ export default function Navbar() {
       {mobileOpen && (
         <nav className="md:hidden bg-white dark:bg-gray-900 shadow-inner">
           <ul className="flex flex-col space-y-2 p-4">
+            {isLoggedIn && (
+              <li className="flex items-center space-x-2 mb-4">
+                {user?.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt="User avatar"
+                    onClick={goToDashboard}
+                    className="h-10 w-10 rounded-full ring-2 ring-orange-500 cursor-pointer"
+                  />
+                ) : (
+                  <FiUser
+                    size={30}
+                    className="text-gray-700 dark:text-gray-300 cursor-pointer"
+                    onClick={goToDashboard}
+                  />
+                )}
+                <span className="text-gray-800 dark:text-gray-200 font-medium">
+                  {user?.name || "Dashboard"}
+                </span>
+              </li>
+            )}
+
             {links.map(({ to, label, auth, role: required }) => {
               if (auth && !isLoggedIn) return null;
               if (required && role !== required) return null;
@@ -136,6 +182,7 @@ export default function Navbar() {
                 </NavLink>
               );
             })}
+
             <li>
               <button
                 onClick={toggleDark}
@@ -144,6 +191,19 @@ export default function Navbar() {
                 {darkMode ? "Light Mode" : "Dark Mode"}
               </button>
             </li>
+
+            {isLoggedIn && (
+              <li>
+                <button
+                  onClick={goToDashboard}
+                  className="w-full flex items-center px-2 py-2 space-x-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-700 dark:text-gray-300"
+                >
+                  <FiUser />
+                  <span>Dashboard</span>
+                </button>
+              </li>
+            )}
+
             <li>
               {!isLoggedIn ? (
                 <NavLink
@@ -155,9 +215,7 @@ export default function Navbar() {
                 </NavLink>
               ) : (
                 <button
-                  onClick={() => {
-                    handleLogout();
-                  }}
+                  onClick={handleLogout}
                   className="w-full px-2 py-2 rounded bg-red-500 text-white"
                 >
                   Log out

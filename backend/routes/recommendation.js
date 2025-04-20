@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const Recommendation = require('../model/Recommendation');
-const auth = require('../middlewares/auth'); // your JWT/auth middleware
+const auth = require('../middleware/auth'); // your JWT/auth middleware
 
 /**
  * @route   GET /api/recommendations

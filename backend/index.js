@@ -5,7 +5,7 @@ const cors           = require('cors');
 const { DBConnection } = require('./database/db.js');
 
 // Route modules
-const userRoutes               = require('./routes/user');
+const userRoutes               = require('./routes/UserRoute');
 const problemsRoutes           = require('./routes/problems');
 const addUserProblemRoutes     = require('./routes/adduserproblem');
 const contestProblemRoutes     = require('./routes/ContestRoute');
@@ -33,10 +33,8 @@ const allowedOrigins = [
   'http://localhost:3000',       // Local dev
   'https://codeinnovate.tech',   // Production domain
 ];
-
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (e.g. mobile apps, curl)
     if (!origin || allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
@@ -46,7 +44,6 @@ app.use(cors({
 }));
 
 // ----- Route registration -----
-// Authentication middleware can be inserted before protected routes if needed
 app.use('/', userRoutes);
 app.use('/', problemsRoutes);
 app.use('/', addUserProblemRoutes);
@@ -56,8 +53,9 @@ app.use('/', submissionRoutes);
 app.use('/', userSolveRoute);
 app.use('/', userSolveProgramRoute);
 
-// Recommendations (requires auth – ensure userRoutes sets req.user)
 app.use('/api/recommendations', recommendationRoutes);
+app.use('/stats',     require('./routes/stats'));
+app.use('/activity',  require('./routes/activity'));
 
 // Health check / root
 app.get('/', (req, res) => {
