@@ -1,172 +1,125 @@
-// frontend/src/components/Navbar.jsx
-import React, { useContext, useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
-import { AuthContext } from "./AuthContext";
-import { FiMenu, FiX, FiSun, FiMoon } from "react-icons/fi";
-import logo from "../assets/logo.gif";
+// src/components/Sidebar.jsx
+import React, { useContext, useState, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import {
+  FiHome,
+  FiCode,
+  FiGrid,
+  FiCalendar,
+  FiPlusCircle,
+  FiSettings,
+  FiSun,
+  FiMoon,
+  FiMenu,
+  FiX
+} from 'react-icons/fi';
+import useDarkMode from '../hooks/useDarkMode';
+import toast from 'react-hot-toast';
+import { AuthContext } from './AuthContext';
 
 const links = [
-  { to: "/", label: "Home" },
-  { to: "/compiler", label: "Compiler" },
-  { to: "/allproblems", label: "Problems" },
-  { to: "/contest", label: "Contests", auth: true },
-  { to: "/addproblems", label: "Add Problem", role: "admin" },
-  { to: "/deleteproblems", label: "Manage", role: "admin" },
-  { to: "/adduserproblems", label: "Add Problem", role: "user" },
+  { to: '/', label: 'Home', icon: FiHome },
+  { to: '/compiler', label: 'Compiler', icon: FiCode },
+  { to: '/allproblems', label: 'Problems', icon: FiGrid },
+  { to: '/contest', label: 'Contests', icon: FiCalendar, auth: true },
+  { to: '/addproblems', label: 'Add Problem', icon: FiPlusCircle, role: 'admin' },
+  { to: '/deleteproblems', label: 'Manage', icon: FiSettings, role: 'admin' }
 ];
 
-export default function Navbar() {
+export default function Sidebar() {
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-  const role = localStorage.getItem("role");
+  const role = localStorage.getItem('role');
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [theme, toggleTheme] = useDarkMode();
+  const { pathname } = useLocation();
 
-  // Persist dark mode preference
+  // Close mobile menu on route change
   useEffect(() => {
-    const saved = localStorage.getItem("darkMode") === "true";
-    setDarkMode(saved);
-    document.documentElement.classList.toggle("dark", saved);
-  }, []);
-
-  const toggleDark = () => {
-    const next = !darkMode;
-    setDarkMode(next);
-    localStorage.setItem("darkMode", next);
-    document.documentElement.classList.toggle("dark", next);
-  };
+    setMobileOpen(false);
+  }, [pathname]);
 
   const handleLogout = () => {
     localStorage.clear();
     setIsLoggedIn(false);
-    setMobileOpen(false);
+    toast.success("Logged out!");
+    window.location.reload(); // hard reload to reset state
   };
 
-  return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md">
-      <div className="max-w-6xl mx-auto flex items-center justify-between p-4">
-        {/* Logo */}
-        <NavLink to="/" className="flex items-center space-x-2">
-          <img src={logo} alt="Logo" className="h-8 w-auto" />
-          <span className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-            CODE INNOVATE GROW
-          </span>
+  const renderLinks = () =>
+    links.map(({ to, label, icon: Icon, auth, role: required }) => {
+      if (auth && !isLoggedIn) return null;
+      if (required && role !== required) return null;
+      return (
+        <NavLink
+          key={to}
+          to={to}
+          className={({ isActive }) =>
+            `flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors 
+             text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 ${
+               isActive ? 'bg-gray-300 dark:bg-gray-700 font-semibold' : ''
+             }`
+          }
+        >
+          <Icon className="w-5 h-5" />
+          <span>{label}</span>
         </NavLink>
+      );
+    });
 
-        {/* Desktop Links */}
-        <nav className="hidden md:flex space-x-6">
-          {links.map(({ to, label, auth, role: required }) => {
-            if (auth && !isLoggedIn) return null;
-            if (required && role !== required) return null;
-            return (
-              <NavLink
-                key={to}
-                to={to}
-                className={({ isActive }) =>
-                  `text-gray-700 dark:text-gray-300 hover:text-orange-500 dark:hover:text-orange-400 transition ${
-                    isActive ? "font-bold border-b-2 border-orange-500" : ""
-                  }`
-                }
-              >
-                {label}
-              </NavLink>
-            );
-          })}
-        </nav>
+  return (
+    <>
+      {/* Mobile Hamburger */}
+      <button
+        className="fixed top-4 left-4 z-50 p-2 bg-white dark:bg-gray-900 rounded-md shadow-md md:hidden"
+        onClick={() => setMobileOpen(o => !o)}
+        aria-label="Toggle menu"
+      >
+        {mobileOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+      </button>
 
-        {/* Action Buttons */}
-        <div className="hidden md:flex items-center space-x-4">
+      {/* Sidebar */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-900 shadow-lg 
+                    transform transition-transform duration-300 
+                    ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+      >
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">
+            MENU
+          </h2>
           <button
-            onClick={toggleDark}
+            onClick={toggleTheme}
             aria-label="Toggle dark mode"
-            className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-800 transition"
+            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-800 transition"
           >
-            {darkMode ? <FiSun /> : <FiMoon />}
+            {theme === 'dark' ? (
+              <FiSun className="w-5 h-5 text-yellow-400" />
+            ) : (
+              <FiMoon className="w-5 h-5 text-gray-600" />
+            )}
           </button>
+        </div>
 
-          {!isLoggedIn ? (
-            <>
-              <NavLink
-                to="/login"
-                className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
-              >
-                Log in
-              </NavLink>
-              <NavLink
-                to="/register"
-                className="px-4 py-2 border border-orange-500 text-orange-500 rounded hover:bg-orange-50 dark:hover:bg-gray-800 transition"
-              >
-                Sign up
-              </NavLink>
-            </>
-          ) : (
+        <nav className="flex flex-col p-4 space-y-1">{renderLinks()}</nav>
+
+        <div className="mt-auto p-4 border-t border-gray-200 dark:border-gray-700">
+          {isLoggedIn ? (
             <button
               onClick={handleLogout}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+              className="w-full flex items-center justify-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
             >
               Log out
             </button>
+          ) : (
+            <NavLink
+              to="/login"
+              className="w-full block text-center px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition"
+            >
+              Log in
+            </NavLink>
           )}
         </div>
-
-        {/* Mobile Hamburger */}
-        <button
-          className="md:hidden p-2 text-gray-700 dark:text-gray-300"
-          onClick={() => setMobileOpen((o) => !o)}
-          aria-label="Toggle menu"
-        >
-          {mobileOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Drawer */}
-      {mobileOpen && (
-        <nav className="md:hidden bg-white dark:bg-gray-900 shadow-inner">
-          <ul className="flex flex-col space-y-2 p-4">
-            {links.map(({ to, label, auth, role: required }) => {
-              if (auth && !isLoggedIn) return null;
-              if (required && role !== required) return null;
-              return (
-                <NavLink
-                  key={to}
-                  to={to}
-                  onClick={() => setMobileOpen(false)}
-                  className="block px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-700 dark:text-gray-300"
-                >
-                  {label}
-                </NavLink>
-              );
-            })}
-            <li>
-              <button
-                onClick={toggleDark}
-                className="w-full text-left px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-700 dark:text-gray-300"
-              >
-                {darkMode ? "Light Mode" : "Dark Mode"}
-              </button>
-            </li>
-            <li>
-              {!isLoggedIn ? (
-                <NavLink
-                  to="/login"
-                  onClick={() => setMobileOpen(false)}
-                  className="block px-2 py-2 rounded bg-orange-500 text-white text-center"
-                >
-                  Log in
-                </NavLink>
-              ) : (
-                <button
-                  onClick={() => {
-                    handleLogout();
-                  }}
-                  className="w-full px-2 py-2 rounded bg-red-500 text-white"
-                >
-                  Log out
-                </button>
-              )}
-            </li>
-          </ul>
-        </nav>
-      )}
-    </header>
+      </aside>
+    </>
   );
 }
