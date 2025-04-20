@@ -1,0 +1,79 @@
+{
+    "topics": [
+      {
+        "title": "Arrays and Strings",
+        "description": "Explore problems related to arrays and strings."
+      },
+      {
+        "title": "Linked Lists",
+        "description": "Practice problems related to linked lists."
+      },
+      {
+        "title": "Stacks and Queues",
+        "description": "Challenge yourself with stacks and queues problems."
+      },
+      {
+        "title": "Trees and Graphs",
+        "description": "Solve problems involving trees and graphs."
+      },
+      {
+        "title": "Sorting and Searching",
+        "description": "Master sorting and searching algorithms."
+      },
+      {
+        "title": "Dynamic Programming",
+        "description": "Explore dynamic programming problems."
+      }
+    ],
+    "features": [
+      {
+        "title": "Choose a Topic",
+        "description": "Select a DSA topic you want to practice."
+      },
+      {
+        "title": "Solve Problems",
+        "description": "Pick from a variety of problems ranging from easy to advanced."
+      },
+      {
+        "title": "Submit Solutions",
+        "description": "Test your solutions against our test cases."
+      },
+      {
+        "title": "Learn and Improve",
+        "description": "Review solutions and learn from others."
+      }
+    ],
+    "whyChooseUs": [
+      {
+        "title": "Comprehensive Coverage",
+        "description": "We cover a wide range of DSA topics with curated problems."
+      },
+      {
+        "title": "Community-Driven Learning",
+        "description": "Engage with a community of students and professionals."
+      },
+      {
+        "title": "Track Your Progress",
+        "description": "Monitor your improvement with our progress tracking feature."
+      },
+      {
+        "title": "Resources and Tips",
+        "description": "Access tutorials, articles, and tips to enhance your understanding."
+      }
+    ],
+    "footerLinks": [
+      {
+        "text": "Privacy Policy",
+        "url": "/privacy-policy"
+      },
+      {
+        "text": "Terms of Service",
+        "url": "/terms-of-service"
+      },
+      {
+        "text": "Contact Us",
+        "url": "/contact-us"
+      }
+    ]
+  }
+  
