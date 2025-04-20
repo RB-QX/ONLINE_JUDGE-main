@@ -19,6 +19,7 @@ import {
   FiTrash2,
 } from "react-icons/fi";
 
+// Starter code templates per language
 const starterCodes = {
   cpp: `#include <iostream>\nusing namespace std;\nint main() {\n  cout<<"Hello, World!";\n  return 0;\n}`,
   c: `#include <stdio.h>\nint main() {\n  printf("Hello, World!");\n  return 0;\n}`,
@@ -27,6 +28,7 @@ const starterCodes = {
   js: `function main() {\n  console.log("Hello, World!");\n}\nmain();`,
 };
 
+// Code snippets per language
 const snippets = {
   cpp: [
     { label: "for-loop", code: "for (int i = 0; i < N; ++i) {\n  \n}" },
@@ -57,6 +59,15 @@ export default function NormalCodeEditor({ problemId, userId }) {
 
   const editorRef = useRef();
 
+  // Axios instance for compiler service
+  const compilerApi = useRef(
+    axios.create({
+      baseURL: process.env.REACT_APP_COMPILER_URL || "http://localhost:5000",
+      timeout: 20000,
+      withCredentials: true,
+    })
+  ).current;
+
   // Load or reset code when language changes
   useEffect(() => {
     if (autoSave) {
@@ -69,13 +80,13 @@ export default function NormalCodeEditor({ problemId, userId }) {
     setCode(starterCodes[language]);
   }, [language, autoSave, problemId]);
 
-  // Autosave & bump version on code change
+  // Auto-save & bump version on code change
   useEffect(() => {
     if (autoSave) {
       localStorage.setItem(`code_${problemId}_${language}`, code);
       setVersion((v) => {
-        const [maj, min, patch] = v.slice(1).split(".").map(Number);
-        return `v${maj}.${min}.${patch + 1}`;
+        const [maj, min, pat] = v.slice(1).split('.').map(Number);
+        return `v${maj}.${min}.${pat + 1}`;
       });
     }
   }, [code, autoSave, problemId, language]);
@@ -84,15 +95,16 @@ export default function NormalCodeEditor({ problemId, userId }) {
   const runCode = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      toast.error("Log in to run code");
+      toast.error("Please log in to run code");
       return;
     }
     setLoading(true);
     setOutput("");
     setLogs("");
+
     try {
-      const res = await axios.post(
-        "https://compiler.codeinnovate.tech/run",
+      const res = await compilerApi.post(
+        "/run",
         { userId, problemId, code, language, input },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -109,14 +121,14 @@ export default function NormalCodeEditor({ problemId, userId }) {
         {
           timestamp: new Date().toLocaleTimeString(),
           type: result.type,
+          msg: result.msg,
           code,
           input,
-          output: result.msg,
         },
         ...h,
       ]);
 
-      // Show correct tab
+      // Display appropriate tab
       if (result.type === "error") {
         setLogs(result.msg);
         setActiveTab("logs");
@@ -133,7 +145,7 @@ export default function NormalCodeEditor({ problemId, userId }) {
     }
   };
 
-  // Insert snippet at cursor pos
+  // Insert snippet at cursor
   const insertSnippet = (snippet) => {
     const pos = editorRef.current._input.selectionStart;
     const before = code.slice(0, pos);
@@ -145,7 +157,6 @@ export default function NormalCodeEditor({ problemId, userId }) {
   return (
     <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900">
       <Toaster position="top-right" />
-
       {/* Header */}
       <header className="flex items-center justify-between bg-white dark:bg-gray-800 px-4 py-2 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-4">
@@ -217,8 +228,14 @@ export default function NormalCodeEditor({ problemId, userId }) {
                 onClick={() => {
                   setCode(h.code);
                   setInput(h.input);
-                  setOutput(h.output);
-                  setActiveTab(h.type === "error" ? "logs" : "output");
+                  // ✅ Use if/else instead of ternary for side effects
+                  if (h.type === "error") {
+                    setLogs(h.msg);
+                    setActiveTab("logs");
+                  } else {
+                    setOutput(h.msg);
+                    setActiveTab("output");
+                  }
                   setDrawerOpen(false);
                 }}
               >
@@ -242,8 +259,8 @@ export default function NormalCodeEditor({ problemId, userId }) {
           <div className="grid grid-cols-[auto_1fr] h-full">
             {/* Gutter */}
             <div className="pr-2 text-right select-none text-gray-500 dark:text-gray-400">
-              {code.split("\n").map((_, i) => (
-                <div key={i}>{i + 1}</div>
+              {code.split("\n").map((_, idx) => (
+                <div key={idx}>{idx + 1}</div>
               ))}
             </div>
             {/* Code Editor */}
@@ -279,14 +296,14 @@ export default function NormalCodeEditor({ problemId, userId }) {
         <div className="w-full sm:w-1/3 bg-white dark:bg-gray-900 p-4 border-t sm:border-t-0 sm:border-l border-gray-200 dark:border-gray-700 flex flex-col">
           {/* Tabs */}
           <div className="flex border-b border-gray-200 dark:border-gray-700 mb-2">
-            {["input", "output", "logs"].map((tab) => (
+            {['input', 'output', 'logs'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 py-2 -mb-px font-medium ${
                   activeTab === tab
-                    ? "border-b-2 border-orange-500 text-orange-600"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                    ? 'border-b-2 border-orange-500 text-orange-600'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
                 }`}
                 role="tab"
                 aria-selected={activeTab === tab}

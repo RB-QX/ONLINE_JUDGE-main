@@ -8,7 +8,10 @@ const { generateInputFile } = require("./generateInputFile.js");
 const { executeCode } = require("./executeCode");
 
 //middlewares
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -45,7 +48,7 @@ app.post("/run", async (req, res) => {
   }
 });
 
-const PORT = process.env.COMPILER_PORT||5001;
+const PORT = process.env.COMPILER_PORT||5000;
 const server = app.listen(PORT, () => {
   console.log(`🛠️  Compiler service listening on port ${PORT}`);
 });
