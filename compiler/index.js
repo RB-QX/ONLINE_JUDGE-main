@@ -45,6 +45,17 @@ app.post("/run", async (req, res) => {
   }
 });
 
-app.listen(5000, () => {
-  console.log("Server is listening on port 5000!");
+const PORT = process.env.COMPILER_PORT||5001;
+const server = app.listen(PORT, () => {
+  console.log(`🛠️  Compiler service listening on port ${PORT}`);
+});
+
+server.on("error", (err) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(`❌  Port ${PORT} already in use. ` +
+                  `Set COMPILER_PORT to another value or stop the conflicting process.`);
+    process.exit(1);
+  } else {
+    console.error(err);
+  }
 });

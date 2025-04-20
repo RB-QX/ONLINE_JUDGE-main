@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js server.js",
+    "start": "nodemon index.js ",
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed:cf": "node scripts/fetchCFProblems.js"
   },

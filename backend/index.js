@@ -1,3 +1,4 @@
+// backend/index.js
 require('dotenv').config();            // Load .env early
 const express        = require('express');
 const cookieParser   = require('cookie-parser');
@@ -35,9 +36,7 @@ const allowedOrigins = [
 ];
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
     callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
@@ -58,12 +57,23 @@ app.use('/stats',     require('./routes/stats'));
 app.use('/activity',  require('./routes/activity'));
 
 // Health check / root
-app.get('/', (req, res) => {
-  res.send('Hello World to Online Judge');
-});
+app.get('/', (req, res) => res.send('Hello World to Online Judge'));
 
 // ----- Server startup -----
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
+const PORT = process.env.BACKEND_PORT || 8000;
+const server = app.listen(PORT, () => {
+  console.log(`🚀 Backend server is running on port ${PORT}`);
 });
+
+// Gracefully handle port in use
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`❌  Port ${PORT} is already in use.` +
+                  ` Make sure no other service is running on that port or set BACKEND_PORT to a different value.`);
+    process.exit(1);
+  } else {
+    console.error(err);
+  }
+});
+
+module.exports = app;

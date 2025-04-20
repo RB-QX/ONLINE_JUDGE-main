@@ -1,14 +1,9 @@
 const express = require('express');
 const router  = express.Router();
 const auth    = require('../middleware/auth');
-
-// *** Change here: point to your top‑level compiler folder ***
-const {
-  generateFile,
-  generateInputFile,
-  executeCode
-} = require('../../compiler');  
-
+const generateFile      = require('../../compiler/generateFile');
+const generateInputFile = require('../../compiler/generateInputFile');
+const executeCode       = require('../../compiler/executeCode');
 const User    = require('../model/User');
 const Problem = require('../model/Problem');
 const Submission = require('../model/Submission');
