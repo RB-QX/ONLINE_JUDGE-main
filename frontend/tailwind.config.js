@@ -1,6 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",     // your app code
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -8,8 +10,8 @@ module.exports = {
       },
       colors: {
         richblack: {
-          5: "#F1F2FF",
-          25: "#DBDDEA",
+          5:   "#F1F2FF",
+          25:  "#DBDDEA",
           100: "#AFB2BF",
           200: "#999DAA",
           700: "#2C333F",
@@ -18,6 +20,7 @@ module.exports = {
         },
         blue: {
           100: "#47AC5",
+          500: "#3498DB",
         },
         pink: {
           200: "#EF476F",
@@ -32,11 +35,8 @@ module.exports = {
         purple: {
           500: "#7A288A",
         },
-        blue: {
-          500: "#3498DB",
-        },
       },
     },
   },
-  plugins: [],
+  plugins: [],   // clear out Flowbite plugins
 };
