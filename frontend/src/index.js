@@ -10,7 +10,7 @@ root.render(
   <BrowserRouter>
     <AuthProvider>
       <App />
-      <Toaster />
+      <Toaster position="top-right" />
     </AuthProvider>
   </BrowserRouter>
 );

@@ -1,161 +1,136 @@
-import React, { useState, useEffect } from "react";
+// frontend/src/pages/ProblemsPage.jsx
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 
-const ProblemsPage = () => {
+export default function ProblemsPage() {
   const [problems, setProblems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const [difficulty, setDifficulty] = useState("");
-  const [verdicts, setVerdicts] = useState({});
-  const userId = localStorage.getItem("userId"); // Assuming userId is stored in local storage
 
   useEffect(() => {
     const fetchProblems = async () => {
-      let url = `${process.env.REACT_APP_BACKEND_URL}allproblems`;
-      if (difficulty) {
-        url = `${process.env.REACT_APP_BACKEND_URL}problemsdifficulty?difficulty=${difficulty}`;
-      }
+      setLoading(true);
       try {
-        const response = await fetch(url);
-        if (response.ok) {
-          const data = await response.json();
-          setProblems(data);
-        } else {
-          throw new Error("Failed to fetch problems");
-        }
-      } catch (error) {
-        console.error("Error fetching problems:", error);
+        const url = difficulty
+          ? `${process.env.REACT_APP_BACKEND_URL}problemsdifficulty?difficulty=${difficulty}`
+          : `${process.env.REACT_APP_BACKEND_URL}allproblems`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Failed to fetch problems");
+        const data = await res.json();
+        setProblems(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
-
     fetchProblems();
   }, [difficulty]);
 
-  useEffect(() => {
-    const fetchVerdicts = async () => {
-      if (userId) {
-        const newVerdicts = {};
-        for (const problem of problems) {
-          try {
-            const response = await fetch(
-              `${process.env.REACT_APP_BACKEND_URL}verdict/${userId}/${problem._id}`
-            );
-            if (response.ok) {
-              const data = await response.json();
-              newVerdicts[problem._id] = data.verdict;
-            } else {
-              newVerdicts[problem._id] = "Unsolved";
-            }
-          } catch (error) {
-            newVerdicts[problem._id] = "Unsolved";
-          }
-        }
-        setVerdicts(newVerdicts);
-      }
-    };
+  // Client‑side filtering by title
+  const filtered = useMemo(() => {
+    return problems.filter((p) =>
+      p.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [problems, searchTerm]);
 
-    if (problems.length > 0) {
-      fetchVerdicts();
-    }
-  }, [problems, userId]);
-
-  const getDifficultyColor = (difficulty) => {
-    switch (difficulty) {
+  // Difficulty badge colors
+  const diffColor = (diff) => {
+    switch (diff) {
       case "Easy":
-        return "bg-green-200 text-green-800";
+        return "bg-green-100 text-green-800";
       case "Medium":
-        return "bg-yellow-200 text-yellow-800";
+        return "bg-yellow-100 text-yellow-800";
       case "Hard":
-        return "bg-red-200 text-red-800";
+        return "bg-red-100 text-red-800";
       default:
-        return "";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-  const getVerdictStyle = (verdict) => {
-    switch (verdict) {
-      case "Solved":
-        return { color: "green" }; // Solved
-      case "Unsolved":
-        return { color: "red" }; // Unsolved
-      default:
-        return {};
-    }
-  };
+  // Skeleton loader component
+  const SkeletonCard = () => (
+    <div className="animate-pulse bg-gray-200 h-48 rounded-lg"></div>
+  );
 
   return (
-    <div className="bg-yellow-100 w-full min-h-screen">
-      <div className="container mx-auto px-4 py-8 text-black-400">
-        <h1 className="text-3xl font-bold mb-4">Problems</h1>
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+      <h1 className="text-4xl font-bold mb-6 text-gray-800 dark:text-gray-100">
+        Problems
+      </h1>
 
-        <div className="mb-4">
-          <label
-            htmlFor="difficulty"
-            className="block text-sm font-medium text-yellow-600"
-          >
-            Filter by Difficulty:
-          </label>
-          <select
-            id="difficulty"
-            value={difficulty}
-            onChange={(e) => setDifficulty(e.target.value)}
-            className="mt-1 block w-50 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-          >
-            <option value="">All</option>
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
-          </select>
+      {/* Search & Filter */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+        <input
+          type="text"
+          aria-label="Search problems"
+          placeholder="Search by title..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="flex-1 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"  /* :contentReference[oaicite:1]{index=1} */
+        />
+        <select
+          value={difficulty}
+          onChange={(e) => setDifficulty(e.target.value)}
+          className="p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"  /* :contentReference[oaicite:2]{index=2} */
+        >
+          <option value="">All Difficulties</option>
+          <option value="Easy">Easy</option>
+          <option value="Medium">Medium</option>
+          <option value="Hard">Hard</option>
+        </select>
+      </div>
+
+      {/* Grid of Cards */}
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
         </div>
-
-        <table className="min-w-full bg-white border border-gray-200">
-          <thead className="bg-yellow-200">
-            <tr>
-              <th className="py-2 px-4 border-r border-gray-200 text-center">
-                Title
-              </th>
-              <th className="py-2 px-4 border-r border-gray-200 text-center">
-                Topics
-              </th>
-              <th className="py-2 px-4 border-r border-gray-200 text-center">
-                Difficulty
-              </th>
-              <th className="py-2 px-4 text-center">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {problems.map((problem) => (
-              <tr key={problem._id} className="border-b">
-                <td className="py-2 px-4 border-r border-gray-200 text-center">
-                  <Link
-                    to={`/problems/${problem._id}`}
-                    className="text-blue-600 hover:underline"
-                  >
-                    {problem.title}
-                  </Link>
-                </td>
-                <td className="py-2 px-4 border-r border-gray-200 text-center">
-                  {problem.topics}
-                </td>
-                <td
-                  className={`py-2 px-4 border-r border-gray-200 text-center ${getDifficultyColor(
-                    problem.difficulty
+      ) : (
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          role="list"
+        >
+          {filtered.map((p) => (
+            <article
+              key={p._id}
+              className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition p-6 flex flex-col justify-between"
+              role="listitem"
+              aria-labelledby={`title-${p._id}`}  /* :contentReference[oaicite:3]{index=3} */
+            >
+              <header>
+                <h2
+                  id={`title-${p._id}`}
+                  className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100"
+                >
+                  {p.title}
+                </h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  {p.description.slice(0, 80)}...
+                </p>
+              </header>
+              <footer className="flex items-center justify-between">
+                <span
+                  className={`px-2 py-1 text-xs font-medium rounded ${diffColor(
+                    p.difficulty
                   )}`}
                 >
-                  {problem.difficulty}
-                </td>
-                <td
-                  className="py-2 px-4 text-center"
-                  style={getVerdictStyle(verdicts[problem._id] || "Unsolved")}
+                  {p.difficulty}
+                </span>
+                <Link
+                  to={`/problems/${p._id}`}
+                  className="text-orange-500 hover:underline"
                 >
-                  {verdicts[problem._id] || "Unsolved"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+                  View
+                </Link>
+              </footer>
+            </article>
+          ))}
+        </div>
+      )}
+    </main>
   );
-};
-
-export default ProblemsPage;
-
+}

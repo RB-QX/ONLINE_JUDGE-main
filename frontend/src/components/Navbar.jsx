@@ -1,539 +1,172 @@
-// import React, { useContext, useState } from "react";
-// import { Link } from "react-router-dom";
-// import { toast } from "react-hot-toast";
-// import { AuthContext } from "./AuthContext";
-// import { FiMenu, FiX } from "react-icons/fi";
-// import logo from "../assets/logo.gif";
-
-// const Navbar = () => {
-//   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-//   const userRole = localStorage.getItem("role");
-//   const [menuOpen, setMenuOpen] = useState(false);
-
-//   const handleLogout = () => {
-//     localStorage.clear();
-//     setIsLoggedIn(false);
-//     toast.success("Logged Out");
-//     setMenuOpen(false); // Close menu after logout
-//   };
-
-//   const toggleMenu = () => {
-//     setMenuOpen(!menuOpen);
-//   };
-
-//   const closeMenu = () => {
-//     setMenuOpen(false);
-//   };
-
-//   return (
-//     <div className="relative z-10">
-//       <div className="flex justify-between items-center w-11/12 max-w-[1160px] py-4 mx-auto">
-//         <Link to="/">
-//           <div className="flex flex-row justify-center items-center">
-//             <img
-//               src={logo}
-//               alt="Logo"
-//               width={80}
-//               height={15}
-//               loading="lazy"
-//               className="z-10"
-//             />
-//             <h1 className="px-4 text-xl text-yellow-200">CODE INNOVATE GROW</h1>
-//           </div>
-//         </Link>
-
-//         <div className="md:hidden">
-//           <button onClick={toggleMenu} className="text-richblack-100 z-10">
-//             {menuOpen ? (
-//               <FiX size={24} className="text-yellow-400" />
-//             ) : (
-//               <FiMenu size={24} className="text-yellow-400" />
-//             )}
-//           </button>
-//         </div>
-
-//         <nav
-//           className={`fixed top-0 right-0 h-full w-64 bg-richblack-800 text-richblack-100 transform ${
-//             menuOpen ? "translate-x-0" : "translate-x-full"
-//           } transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex md:items-center w-full md:w-auto z-20`}
-//         >
-//           <ul className="flex flex-col md:flex-row gap-x-6 gap-y-4 mt-4 md:mt-0 p-4">
-//             <li>
-//               <Link to="/" onClick={closeMenu}>
-//                 Home
-//               </Link>
-//             </li>
-//             {isLoggedIn && (
-//               <li>
-//                 <Link to="/contest" onClick={closeMenu}>
-//                   Contest
-//                 </Link>
-//               </li>
-//             )}
-//             <li>
-//               <Link to="/compiler" onClick={closeMenu}>
-//                 Compiler
-//               </Link>
-//             </li>
-//             {isLoggedIn && userRole === "admin" && (
-//               <>
-//                 <li>
-//                   <Link to="/addproblems" onClick={closeMenu}>
-//                     Add Problems
-//                   </Link>
-//                 </li>
-//                 <li>
-//                   <Link to="/deleteproblems" onClick={closeMenu}>
-//                     Update and Delete
-//                   </Link>
-//                 </li>
-//               </>
-//             )}
-//             {isLoggedIn && userRole === "user" && (
-//               <li>
-//                 <Link to="/adduserproblems" onClick={closeMenu}>
-//                   Add Problems
-//                 </Link>
-//               </li>
-//             )}
-//             <li>
-//               <Link to="/allproblems" onClick={closeMenu}>
-//                 Problems
-//               </Link>
-//             </li>
-//           </ul>
-
-//           {isLoggedIn && (
-//             <div className="flex flex-col md:flex-row md:items-center gap-y-4 mt-4 md:mt-0 md:gap-x-4 p-4">
-//               <button
-//                 onClick={() => {
-//                   handleLogout();
-//                   closeMenu();
-//                 }}
-//                 className="bg-richblack-800 text-richblack-100 py-[8px] px-[12px] rounded-[8px] border border-richblack-700"
-//               >
-//                 Log Out
-//               </button>
-//               {userRole === "admin" && (
-//                 <Link to="/dashboard" onClick={closeMenu}>
-//                   <button className="bg-richblack-800 text-richblack-100 py-[8px] px-[12px] rounded-[8px] border border-richblack-700">
-//                     Dashboard
-//                   </button>
-//                 </Link>
-//               )}
-//               {userRole === "user" && (
-//                 <Link to="/profile" onClick={closeMenu}>
-//                   <button className="bg-richblack-800 text-richblack-100 py-[8px] px-[12px] rounded-[8px] border border-richblack-700">
-//                     Profile
-//                   </button>
-//                 </Link>
-//               )}
-//             </div>
-//           )}
-//         </nav>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Navbar;
-
-// import React, { useContext } from "react";
-// import logo from "../assets/logo.gif";
-// import { Link } from "react-router-dom";
-// import { toast } from "react-hot-toast";
-// import { AuthContext } from "./AuthContext";
-
-// const Navbar = () => {
-//   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-//   const userRole = localStorage.getItem("role");
-
-//   const handleLogout = () => {
-//     localStorage.clear();
-//     setIsLoggedIn(false);
-//     toast.success("Logged Out");
-//   };
-
-//   return (
-//     <div className="flex justify-between items-center w-11/12 max-w-[1160px] py-4 mx-auto">
-//       <Link to="/">
-//         <div className="flex flex-row justify-center items-center">
-//           <img src={logo} alt="Logo" width={80} height={15} loading="lazy" />
-//           <h1 className="px-10 text-xl text-yellow-200">CODE INNOVATE GROW</h1>
-//         </div>
-//       </Link>
-
-//       <nav>
-//         <ul className="text-richblack-100 flex gap-x-6">
-//           <li>
-//             <Link to="/">Home</Link>
-//           </li>
-//           {isLoggedIn && (
-//             <li>
-//               <Link to="/contest">Contest</Link>
-//             </li>
-//           )}
-//           <li>
-//             <Link to="/compiler">Compiler</Link>
-//           </li>
-//           {isLoggedIn && userRole === "admin" && (
-//             <>
-//               <li>
-//                 <Link to="/addproblems">Add Problems</Link>
-//               </li>
-//               <li>
-//                 <Link to="/deleteproblems">Update and Delete</Link>
-//               </li>
-//             </>
-//           )}
-//           {isLoggedIn && userRole === "user" && (
-//             <li>
-//               <Link to="/adduserproblems">Add Problems</Link>
-//             </li>
-//           )}
-//           <li>
-//             <Link to="/allproblems">Problems</Link>
-//           </li>
-//         </ul>
-//       </nav>
-
-//       <div className="flex items-center gap-x-4">
-//         {!isLoggedIn ? (
-//           <>
-//             <Link to="/login">
-//               <button
-//                 className="bg-richblack-800 text-richblack-100 py-[8px]
-//                       px-[12px] rounded-[8px] border border-richblack-700"
-//               >
-//                 Log in
-//               </button>
-//             </Link>
-//             <Link to="/register">
-//               <button
-//                 className="bg-richblack-800 text-richblack-100 py-[8px]
-//                       px-[12px] rounded-[8px] border border-richblack-700"
-//               >
-//                 Sign up
-//               </button>
-//             </Link>
-//           </>
-//         ) : (
-//           <>
-//             <Link to="/">
-//               <button
-//                 onClick={handleLogout}
-//                 className="bg-richblack-800 text-richblack-100 py-[8px]
-//                       px-[12px] rounded-[8px] border border-richblack-700"
-//               >
-//                 Log Out
-//               </button>
-//             </Link>
-//             {userRole === "admin" && (
-//               <Link to="/dashboard">
-//                 <button
-//                   className="bg-richblack-800 text-richblack-100 py-[8px]
-//                         px-[12px] rounded-[8px] border border-richblack-700"
-//                 >
-//                   Dashboard
-//                 </button>
-//               </Link>
-//             )}
-//             {userRole === "user" && (
-//               <Link to="/profile">
-//                 <button
-//                   className="bg-richblack-800 text-richblack-100 py-[8px]
-//                         px-[12px] rounded-[8px] border border-richblack-700"
-//                 >
-//                   Profile
-//                 </button>
-//               </Link>
-//             )}
-//           </>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Navbar;
-
-import React, { useContext, useState } from "react";
-import logo from "../assets/logo.gif";
-import { Link } from "react-router-dom";
-import { toast } from "react-hot-toast";
+// frontend/src/components/Navbar.jsx
+import React, { useContext, useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
-import { FiMenu, FiX } from "react-icons/fi";
+import { FiMenu, FiX, FiSun, FiMoon } from "react-icons/fi";
+import logo from "../assets/logo.gif";
 
-const Navbar = () => {
+const links = [
+  { to: "/", label: "Home" },
+  { to: "/compiler", label: "Compiler" },
+  { to: "/allproblems", label: "Problems" },
+  { to: "/contest", label: "Contests", auth: true },
+  { to: "/addproblems", label: "Add Problem", role: "admin" },
+  { to: "/deleteproblems", label: "Manage", role: "admin" },
+  { to: "/adduserproblems", label: "Add Problem", role: "user" },
+];
+
+export default function Navbar() {
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-  const userRole = localStorage.getItem("role");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const typingAnimation = {
-    display: "inline-block",
-  };
+  const role = localStorage.getItem("role");
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
-  const spanStyles = {
-    opacity: 1,
-    animation: "typing 1s forwards",
-    color: "#f15f79",
+  // Persist dark mode preference
+  useEffect(() => {
+    const saved = localStorage.getItem("darkMode") === "true";
+    setDarkMode(saved);
+    document.documentElement.classList.toggle("dark", saved);
+  }, []);
+
+  const toggleDark = () => {
+    const next = !darkMode;
+    setDarkMode(next);
+    localStorage.setItem("darkMode", next);
+    document.documentElement.classList.toggle("dark", next);
   };
 
   const handleLogout = () => {
     localStorage.clear();
     setIsLoggedIn(false);
-    toast.success("Logged Out");
-    setMenuOpen(false); // Close menu after logout
-  };
-
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+    setMobileOpen(false);
   };
 
   return (
-    <div className="flex justify-between items-center w-11/12 max-w-[1160px] py-4 mx-auto">
-      <Link to="/">
-        <div className="flex flex-row justify-center items-center">
-          <img src={logo} alt="Logo" width={80} height={15} loading="lazy" />
-          <h1 className="px-10 text-xl text-yellow-200">CODE INNOVATE GROW</h1>
-        </div>
-      </Link>
+    <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md">
+      <div className="max-w-6xl mx-auto flex items-center justify-between p-4">
+        {/* Logo */}
+        <NavLink to="/" className="flex items-center space-x-2">
+          <img src={logo} alt="Logo" className="h-8 w-auto" />
+          <span className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+            CODE INNOVATE GROW
+          </span>
+        </NavLink>
 
-      {/* Hamburger Icon for Small Screens */}
-      <div className="md:hidden">
-        <button onClick={toggleMenu} className="text-richblack-100">
-          {menuOpen ? (
-            <FiX size={24} className="text-yellow-400" />
+        {/* Desktop Links */}
+        <nav className="hidden md:flex space-x-6">
+          {links.map(({ to, label, auth, role: required }) => {
+            if (auth && !isLoggedIn) return null;
+            if (required && role !== required) return null;
+            return (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  `text-gray-700 dark:text-gray-300 hover:text-orange-500 dark:hover:text-orange-400 transition ${
+                    isActive ? "font-bold border-b-2 border-orange-500" : ""
+                  }`
+                }
+              >
+                {label}
+              </NavLink>
+            );
+          })}
+        </nav>
+
+        {/* Action Buttons */}
+        <div className="hidden md:flex items-center space-x-4">
+          <button
+            onClick={toggleDark}
+            aria-label="Toggle dark mode"
+            className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-800 transition"
+          >
+            {darkMode ? <FiSun /> : <FiMoon />}
+          </button>
+
+          {!isLoggedIn ? (
+            <>
+              <NavLink
+                to="/login"
+                className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
+              >
+                Log in
+              </NavLink>
+              <NavLink
+                to="/register"
+                className="px-4 py-2 border border-orange-500 text-orange-500 rounded hover:bg-orange-50 dark:hover:bg-gray-800 transition"
+              >
+                Sign up
+              </NavLink>
+            </>
           ) : (
-            <FiMenu size={24} className="text-yellow-400" />
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+            >
+              Log out
+            </button>
           )}
+        </div>
+
+        {/* Mobile Hamburger */}
+        <button
+          className="md:hidden p-2 text-gray-700 dark:text-gray-300"
+          onClick={() => setMobileOpen((o) => !o)}
+          aria-label="Toggle menu"
+        >
+          {mobileOpen ? <FiX size={24} /> : <FiMenu size={24} />}
         </button>
       </div>
 
-      {/* Sidebar Navigation */}
-      <nav
-        className={`fixed top-0 right-0 h-full w-64 bg-richblack-800 text-richblack-100 transform ${
-          menuOpen ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex md:items-center w-full md:w-auto z-20`}
-      >
-        <ul className="flex flex-col md:flex-row gap-x-6 gap-y-4 mt-4 md:mt-0 p-4">
-          <li>
-            <Link to="/" onClick={() => setMenuOpen(false)}>
-              Home
-            </Link>
-          </li>
-          {isLoggedIn && (
+      {/* Mobile Drawer */}
+      {mobileOpen && (
+        <nav className="md:hidden bg-white dark:bg-gray-900 shadow-inner">
+          <ul className="flex flex-col space-y-2 p-4">
+            {links.map(({ to, label, auth, role: required }) => {
+              if (auth && !isLoggedIn) return null;
+              if (required && role !== required) return null;
+              return (
+                <NavLink
+                  key={to}
+                  to={to}
+                  onClick={() => setMobileOpen(false)}
+                  className="block px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-700 dark:text-gray-300"
+                >
+                  {label}
+                </NavLink>
+              );
+            })}
             <li>
-              <Link to="/contest" onClick={() => setMenuOpen(false)}>
-                Contest
-              </Link>
+              <button
+                onClick={toggleDark}
+                className="w-full text-left px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-700 dark:text-gray-300"
+              >
+                {darkMode ? "Light Mode" : "Dark Mode"}
+              </button>
             </li>
-          )}
-          <li>
-            <Link to="/compiler" onClick={() => setMenuOpen(false)}>
-              Compiler
-            </Link>
-          </li>
-          {isLoggedIn && userRole === "admin" && (
-            <>
-              <li>
-                <Link to="/addproblems" onClick={() => setMenuOpen(false)}>
-                  Add Problems
-                </Link>
-              </li>
-              <li>
-                <Link to="/deleteproblems" onClick={() => setMenuOpen(false)}>
-                  Update and Delete
-                </Link>
-              </li>
-            </>
-          )}
-          {isLoggedIn && userRole === "user" && (
             <li>
-              <Link to="/adduserproblems" onClick={() => setMenuOpen(false)}>
-                Add Problems
-              </Link>
-            </li>
-          )}
-          <li>
-            <Link to="/allproblems" onClick={() => setMenuOpen(false)}>
-              Problems
-            </Link>
-          </li>
-        </ul>
-        <div className=" md:hidden flex flex-col  gap-x-4">
-          {!isLoggedIn ? (
-            <>
-              <Link to="/login" onClick={() => setMenuOpen(false)}>
-                <button
-                  className="bg-richblack-800 text-richblack-100 py-[8px]
-                      px-[12px] rounded-[8px] border border-richblack-700"
+              {!isLoggedIn ? (
+                <NavLink
+                  to="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="block px-2 py-2 rounded bg-orange-500 text-white text-center"
                 >
                   Log in
-                </button>
-              </Link>
-              <Link to="/register" onClick={() => setMenuOpen(false)}>
+                </NavLink>
+              ) : (
                 <button
-                  className="bg-richblack-800 text-richblack-100 py-[8px]
-                      px-[12px] rounded-[8px] border border-richblack-700"
+                  onClick={() => {
+                    handleLogout();
+                  }}
+                  className="w-full px-2 py-2 rounded bg-red-500 text-white"
                 >
-                  Sign up
+                  Log out
                 </button>
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link to="/" onClick={() => setMenuOpen(false)}>
-                <button
-                  onClick={handleLogout}
-                  className="bg-richblack-800 text-richblack-100 py-[8px]
-                      px-[12px] rounded-[8px] border border-richblack-700"
-                >
-                  Log Out
-                </button>
-              </Link>
-              {userRole === "admin" && (
-                <Link to="/dashboard" onClick={() => setMenuOpen(false)}>
-                  <button
-                    className="bg-richblack-800 text-richblack-100 py-[8px]
-                        px-[12px] rounded-[8px] border border-richblack-700"
-                  >
-                    Dashboard
-                  </button>
-                </Link>
               )}
-              {userRole === "user" && (
-                <Link to="/profile" onClick={() => setMenuOpen(false)}>
-                  <button
-                    className="bg-richblack-800 text-richblack-100 py-[8px]
-                        px-[12px] rounded-[8px] border border-richblack-700"
-                  >
-                    Profile
-                  </button>
-                </Link>
-              )}
-            </>
-          )}
-        </div>
-        <li className="md:hidden gap-x-4">
-          <Link to="/" onClick={() => setMenuOpen(false)}>
-            Back
-          </Link>
-        </li>
-
-        {/* Logged-in User Actions */}
-        {/* <div className="hidden md:flex items-center gap-x-4">
-          {!isLoggedIn ? (
-            <>
-              <Link to="/login">
-                <button
-                  className="bg-richblack-800 text-richblack-100 py-[8px]
-                      px-[12px] rounded-[8px] border border-richblack-700"
-                >
-                  Log in
-                </button>
-              </Link>
-              <Link to="/register">
-                <button
-                  className="bg-richblack-800 text-richblack-100 py-[8px]
-                      px-[12px] rounded-[8px] border border-richblack-700"
-                >
-                  Sign up
-                </button>
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link to="/">
-                <button
-                  onClick={handleLogout}
-                  className="bg-richblack-800 text-richblack-100 py-[8px]
-                      px-[12px] rounded-[8px] border border-richblack-700"
-                >
-                  Log Out
-                </button>
-              </Link>
-              {userRole === "admin" && (
-                <Link to="/dashboard">
-                  <button
-                    className="bg-richblack-800 text-richblack-100 py-[8px]
-                        px-[12px] rounded-[8px] border border-richblack-700"
-                  >
-                    Dashboard
-                  </button>
-                </Link>
-              )}
-              {userRole === "user" && (
-                <Link to="/profile">
-                  <button
-                    className="bg-richblack-800 text-richblack-100 py-[8px]
-                        px-[12px] rounded-[8px] border border-richblack-700"
-                  >
-                    Profile
-                  </button>
-                </Link>
-              )}
-            </>
-          )}
-        </div> */}
-      </nav>
-
-      {/* Login and Sign Up Buttons in Desktop View */}
-      <div className="hidden md:flex items-center gap-x-4">
-        {!isLoggedIn ? (
-          <>
-            <Link to="/login">
-              <button
-                className="bg-richblack-800 text-richblack-100 py-[8px]
-                      px-[12px] rounded-[8px] border border-richblack-700"
-              >
-                Log in
-              </button>
-            </Link>
-            <Link to="/register">
-              <button
-                className="bg-richblack-800 text-richblack-100 py-[8px]
-                      px-[12px] rounded-[8px] border border-richblack-700"
-              >
-                Sign up
-              </button>
-            </Link>
-          </>
-        ) : (
-          <>
-            <Link to="/">
-              <button
-                onClick={handleLogout}
-                className="bg-richblack-800 text-richblack-100 py-[8px]
-                      px-[12px] rounded-[8px] border border-richblack-700"
-              >
-                Log Out
-              </button>
-            </Link>
-            {userRole === "admin" && (
-              <Link to="/dashboard">
-                <button
-                  className="bg-richblack-800 text-richblack-100 py-[8px]
-                        px-[12px] rounded-[8px] border border-richblack-700"
-                >
-                  Dashboard
-                </button>
-              </Link>
-            )}
-            {userRole === "user" && (
-              <Link to="/profile">
-                <button
-                  className="bg-richblack-800 text-richblack-100 py-[8px]
-                        px-[12px] rounded-[8px] border border-richblack-700"
-                >
-                  Profile
-                </button>
-              </Link>
-            )}
-          </>
-        )}
-      </div>
-    </div>
+            </li>
+          </ul>
+        </nav>
+      )}
+    </header>
   );
-};
-
-export default Navbar;
+}
