@@ -2,17 +2,18 @@
 module.exports = {
   darkMode: 'class',
   content: [
-    "./src/**/*.{js,jsx,ts,tsx}",     // your app code
+    "./src/**/*.{js,jsx,ts,tsx}", // your app code
   ],
   theme: {
     extend: {
       fontFamily: {
         inter: ["Inter", "sans-serif"],
+        poppins: ["Poppins", "sans-serif"],
       },
       colors: {
         richblack: {
-          5:   "#F1F2FF",
-          25:  "#DBDDEA",
+          5: "#F1F2FF",
+          25: "#DBDDEA",
           100: "#AFB2BF",
           200: "#999DAA",
           700: "#2C333F",
@@ -39,5 +40,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],   // clear out Flowbite plugins
+  plugins: [],
 };

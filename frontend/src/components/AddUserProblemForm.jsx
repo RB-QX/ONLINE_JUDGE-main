@@ -8,7 +8,8 @@ const AddUserProblemForm = () => {
   const [outputExample, setOutputExample] = useState("");
   const [constraints, setConstraints] = useState("");
   const [testCases, setTestCases] = useState([{ input: "", output: "" }]);
-  const [topics, setTopics] = useState([]);
+  const [topics, setTopics] = useState("");
+
   const handleTestCaseChange = (index, event) => {
     const newTestCases = testCases.map((testCase, i) =>
       i === index
@@ -24,6 +25,12 @@ const AddUserProblemForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const formattedTopics = topics
+      .split(",")
+      .map((topic) => topic.trim())
+      .filter(Boolean);
+
     const problem = {
       title,
       description,
@@ -32,7 +39,7 @@ const AddUserProblemForm = () => {
       outputExample,
       constraints,
       testCases,
-      topics,
+      topics: formattedTopics,
     };
 
     try {
@@ -40,16 +47,13 @@ const AddUserProblemForm = () => {
         `${process.env.REACT_APP_BACKEND_URL}adduserproblem`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(problem),
         }
       );
 
       if (response.ok) {
-        alert("Problem added successfully");
-        // Reset the form
+        alert("✅ Problem added successfully!");
         setTitle("");
         setDescription("");
         setDifficulty("Easy");
@@ -57,132 +61,128 @@ const AddUserProblemForm = () => {
         setOutputExample("");
         setConstraints("");
         setTestCases([{ input: "", output: "" }]);
-        setTopics([]);
+        setTopics("");
       } else {
-        alert("Error adding problem");
+        alert("❌ Error adding problem.");
       }
     } catch (error) {
-      alert("Error adding problem");
+      alert("❌ Error connecting to server.");
     }
   };
-  // if (!isLoggedIn) {
-  //   return <p>Please log in to add a problem.</p>;
-  // }
 
   return (
-    <form
+    <form 
       onSubmit={handleSubmit}
-      className="mx-auto w-6/12 p-6 bg-yellow-100 shadow-lg rounded-lg"
+      className="max-w-3xl mx-auto p-8 bg-white rounded-2xl shadow-md font-inter"
     >
-      <h1 className="text-3xl  font-bold mb-6 text-center text-blue-600">
-        Add New Problem
+      <h1 className="text-3xl font-bold text-[#6366f1] mb-8 text-center font-poppins">
+        ✏️ Add a New Problem
       </h1>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Title</label>
+
+      {/* TITLE */}
+      <div className="mb-5">
+        <label className="block font-medium text-gray-700 mb-1">Title</label>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="mt-1 block w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Title"
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+          placeholder="Enter problem title"
           required
         />
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Description
-        </label>
+
+      {/* DESCRIPTION */}
+      <div className="mb-5">
+        <label className="block font-medium text-gray-700 mb-1">Description</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="mt-1 block w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Description"
-          rows={4}
+          rows={5}
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+          placeholder="Explain the problem"
           required
         />
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Topics
-        </label>
+
+      {/* TOPICS */}
+      <div className="mb-5">
+        <label className="block font-medium text-gray-700 mb-1">Topics</label>
         <input
           type="text"
           value={topics}
           onChange={(e) => setTopics(e.target.value)}
-          className="mt-1 block w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Enter topics separated by commas"
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+          placeholder="e.g. arrays, sorting, dynamic programming"
           required
         />
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Difficulty
-        </label>
+
+      {/* DIFFICULTY */}
+      <div className="mb-5">
+        <label className="block font-medium text-gray-700 mb-1">Difficulty</label>
         <select
           value={difficulty}
           onChange={(e) => setDifficulty(e.target.value)}
-          className="mt-1 block w-full p-3 border bg-white-500 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500"
         >
-          <option value="Easy">Easy</option>
-          <option value="Medium">Medium</option>
-          <option value="Hard">Hard</option>
+          <option value="Easy">🟢 Easy</option>
+          <option value="Medium">🟡 Medium</option>
+          <option value="Hard">🔴 Hard</option>
         </select>
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Input Example
-        </label>
-        <input
-          type="text"
-          value={inputExample}
-          onChange={(e) => setInputExample(e.target.value)}
-          className="mt-1 block w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Input Example"
-          required
-        />
+
+      {/* EXAMPLES */}
+      <div className="mb-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block font-medium text-gray-700 mb-1">Input Example</label>
+          <input
+            type="text"
+            value={inputExample}
+            onChange={(e) => setInputExample(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+            placeholder="Example input"
+            required
+          />
+        </div>
+        <div>
+          <label className="block font-medium text-gray-700 mb-1">Output Example</label>
+          <input
+            type="text"
+            value={outputExample}
+            onChange={(e) => setOutputExample(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+            placeholder="Expected output"
+            required
+          />
+        </div>
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Output Example
-        </label>
-        <input
-          type="text"
-          value={outputExample}
-          onChange={(e) => setOutputExample(e.target.value)}
-          className="mt-1 block w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Output Example"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Constraints
-        </label>
+
+      {/* CONSTRAINTS */}
+      <div className="mb-5">
+        <label className="block font-medium text-gray-700 mb-1">Constraints</label>
         <textarea
           value={constraints}
           onChange={(e) => setConstraints(e.target.value)}
-          className="mt-1 block w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Constraints"
-          rows={4}
+          rows={3}
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+          placeholder="e.g. 1 ≤ n ≤ 10⁴"
           required
         />
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Test Cases
-        </label>
+
+      {/* TEST CASES */}
+      <div className="mb-6">
+        <label className="block font-medium text-gray-700 mb-2">Test Cases</label>
         {testCases.map((testCase, index) => (
-          <div
-            key={index}
-            className="mb-2 p-2 border border-gray-200 rounded bg-gray-50"
-          >
+          <div key={index} className="mb-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
             <input
               type="text"
               name="input"
               value={testCase.input}
               onChange={(e) => handleTestCaseChange(index, e)}
-              className="mt-1 block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Test Case Input"
+              className="mb-2 w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              placeholder="Input"
               required
             />
             <input
@@ -190,8 +190,8 @@ const AddUserProblemForm = () => {
               name="output"
               value={testCase.output}
               onChange={(e) => handleTestCaseChange(index, e)}
-              className="mt-1 block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Test Case Output"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              placeholder="Expected Output"
               required
             />
           </div>
@@ -199,16 +199,18 @@ const AddUserProblemForm = () => {
         <button
           type="button"
           onClick={addTestCase}
-          className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="mt-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:ring-2 focus:ring-green-500"
         >
-          Add Test Case
+          ➕ Add Another Test Case
         </button>
       </div>
+
+      {/* SUBMIT */}
       <button
         type="submit"
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full py-3 bg-[#6366f1] text-white text-lg rounded-lg hover:bg-indigo-600 transition focus:ring-2 focus:ring-indigo-500"
       >
-        Add Problem
+        🚀 Submit Problem
       </button>
     </form>
   );
